@@ -2,6 +2,48 @@
 
 Please refer following [postman documentation](https://documenter.getpostman.com/view/12674486/2s93m1bQWN) for using endpoints.
 
+# Data Models
+
+```
+show{
+	id
+	start-time
+	end-time
+	date
+	movieId        // Foreign Key
+	screenId       // Foreign Key
+	theatreId      // Foreign Key
+}
+
+theatre{
+	id
+	name
+	addressId      // Foreign Key
+}
+
+screen{
+	id
+	number
+	audio
+	video
+	theatreId      // Foreign Key
+}
+
+address{
+	pincode
+	city
+	state
+	country
+}
+
+movie {
+	id
+	name
+	description
+	genre
+}
+```
+
 # Project Title: Problem Solving Case: bookmyshow
 
 ## Breif

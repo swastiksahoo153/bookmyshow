@@ -25,6 +25,11 @@ const Screen = sequalize.define("screen", {
   },
 });
 
+/**
+ * Define relationship between the models
+ */
+
+// One to Many
 Theatre.hasMany(Screen, {
   onDelete: "CASCADE",
 });

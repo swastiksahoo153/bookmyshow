@@ -29,16 +29,23 @@ const Show = sequalize.define("show", {
   },
 });
 
+/**
+ * Define relationship between the models
+ */
+
+// One to many
 Movie.hasMany(Show, {
   onDelete: "CASCADE",
 });
 Show.belongsTo(Movie);
 
+// One to many
 Screen.hasMany(Show, {
   onDelete: "CASCADE",
 });
 Show.belongsTo(Screen);
 
+//One to many
 Theatre.hasMany(Show, {
   onDelete: "CASCADE",
 });

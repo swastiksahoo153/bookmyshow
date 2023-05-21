@@ -19,6 +19,11 @@ const Theatre = sequalize.define("theatre", {
   },
 });
 
+/**
+ * Define relationship between the models
+ */
+
+// One to one relationship
 Address.hasOne(Theatre); // OnDelete - Null (default)
 Theatre.belongsTo(Address);
 
