@@ -4,28 +4,21 @@
 const sequalize = require("../configs/mysqldb").sequalize;
 const DataTypes = require("sequelize");
 
-const Theatre = require("./theatre");
+const Show = require("./show");
+
 // Define the model by providing name of the table, it's columns, their datatypes and constraints.
 
-const Screen = sequalize.define("screen", {
+const Booking = sequalize.define("booking", {
   id: {
     type: DataTypes.BIGINT,
     autoIncrement: true,
     primaryKey: true,
   },
-  number: {
+  userId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
   },
-  audio: {
-    type: DataTypes.STRING(200),
-  },
-  video: {
-    type: DataTypes.STRING(200),
-  },
-  totalSeats: {
+  seatNum: {
     type: DataTypes.INTEGER,
-    allowNull: false,
   },
 });
 
@@ -34,12 +27,12 @@ const Screen = sequalize.define("screen", {
  */
 
 // One to Many
-Theatre.hasMany(Screen, {
+Show.hasMany(Booking, {
   onDelete: "CASCADE",
 });
-Screen.belongsTo(Theatre);
+Booking.belongsTo(Show);
 
 // Execute the sync command to run migrations
 sequalize.sync();
 
-module.exports = Screen;
+module.exports = Booking;

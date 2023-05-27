@@ -6,6 +6,7 @@ const Address = require("../models/address");
 const Movie = require("../models/movie");
 const Screen = require("../models/screen");
 const Show = require("../models/show");
+const Booking = require("../models/bookings");
 const { getNext7Dates } = require("../helpers/dateHelper");
 
 /**
@@ -87,13 +88,14 @@ router.get("/screens", async (request, response) => {
  * POST /screens
  */
 router.post("/screen", async (request, response) => {
-  const { number, audio, video, theatreName } = request.body;
+  const { number, audio, video, theatreName, totalSeats } = request.body;
 
   const screen = await Screen.create({
     number,
     audio,
     video,
     theatreName,
+    totalSeats,
   });
 
   sequalize
@@ -223,5 +225,77 @@ router.get(
     return response.status(200).json(shows);
   }
 );
+
+/**
+ * GET bookings for the specified show
+ */
+router.get("/show/:showId/bookings", async (request, response) => {
+  let { showId } = request.params;
+  showId = Number(showId);
+
+  const bookings = await Booking.findAll({
+    where: { showId },
+  });
+
+  return response.status(200).json(bookings);
+});
+
+/**
+ * POST book seats
+ */
+router.post("/show/book", async (request, response) => {
+  let { showId, userId, seatNums } = request.body;
+  const { screenId } = await Show.findOne({ where: { id: showId } });
+  const { totalSeats } = await Screen.findOne({ where: { id: screenId } });
+
+  try {
+    await sequalize.transaction(async (transaction) => {
+      const bookings = await Booking.findAll(
+        {
+          where: { showId },
+        },
+        { transaction }
+      );
+
+      const bookedSeats = bookings.map((booking) => booking.seatNum);
+
+      const commonSeats = bookedSeats.filter((value) =>
+        seatNums.includes(value)
+      );
+
+      if (commonSeats.length > 0) {
+        throw `${commonSeats} are already booked`;
+      }
+
+      const seatsExceedingMaxSeatNums = seatNums.filter(
+        (value) => Number(value) > totalSeats
+      );
+
+      const nonPositiveSeats = seatNums.filter((value) => Number(value) < 1);
+
+      const seatsNotPresent =
+        seatsExceedingMaxSeatNums.concat(nonPositiveSeats);
+
+      if (seatsNotPresent.length > 0) {
+        throw `${seatsNotPresent} are not present`;
+      }
+
+      return Booking.bulkCreate(
+        seatNums.map(
+          (seatNum) => {
+            return {
+              seatNum,
+              userId,
+              showId,
+            };
+          },
+          { transaction }
+        )
+      );
+    });
+  } catch (err) {
+    return response.status(400).json(err);
+  }
+});
 
 module.exports = router;
