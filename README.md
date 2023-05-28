@@ -5,7 +5,7 @@ Please refer following [postman documentation](https://documenter.getpostman.com
 # Data Models
 
 ```
-show{
+shows{
 	id
 	start-time
 	end-time
@@ -15,13 +15,13 @@ show{
 	theatreId      // Foreign Key
 }
 
-theatre{
+theatres{
 	id
 	name
 	addressId      // Foreign Key
 }
 
-screen{
+screens{
 	id
 	number
 	audio
@@ -29,18 +29,25 @@ screen{
 	theatreId      // Foreign Key
 }
 
-address{
+addresses{
 	pincode
 	city
 	state
 	country
 }
 
-movie {
+movies {
 	id
 	name
 	description
 	genre
+}
+
+bookings{
+	id
+	showId		// Foreign Key
+	userId		// Foreign Key
+	seatNum
 }
 ```
 
