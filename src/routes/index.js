@@ -88,20 +88,20 @@ router.get("/screens", async (request, response) => {
  * POST /screens
  */
 router.post("/screen", async (request, response) => {
-  const { number, audio, video, theatreName, totalSeats } = request.body;
+  const { number, audio, video, theatreId, totalSeats } = request.body;
 
   const screen = await Screen.create({
     number,
     audio,
     video,
-    theatreName,
+    theatreId,
     totalSeats,
   });
 
   sequalize
     .sync({ alter: true })
     .then(() => {
-      return Theatre.findOne({ where: { name: theatreName } });
+      return Theatre.findOne({ where: { id: theatreId } });
     })
     .then((theatre) => {
       return screen.setTheatre(theatre);
@@ -135,26 +135,26 @@ router.get("/shows", async (request, response) => {
 });
 
 /**
- * POST /shows
+ * POST /show
  */
 router.post("/show", async (request, response) => {
-  const { startTime, endTime, date, theatreName, screenNumber, movieName } =
+  const { startTime, endTime, date, theatreId, screenId, movieId } =
     request.body;
 
   const show = await Show.create({
     startTime,
     endTime,
     date,
-    theatreName,
-    screenNumber,
-    movieName,
+    theatreId,
+    screenId,
+    movieId,
   });
 
   sequalize
     .sync({ alter: true })
     .then(() => {
       return Theatre.findOne({
-        where: { name: theatreName },
+        where: { id: theatreId },
       });
     })
     .then((theatre) => {
@@ -162,7 +162,7 @@ router.post("/show", async (request, response) => {
     })
     .then(() => {
       return Screen.findOne({
-        where: { number: screenNumber },
+        where: { id: screenId },
       });
     })
     .then((screen) => {
@@ -170,7 +170,7 @@ router.post("/show", async (request, response) => {
     })
     .then(() => {
       return Movie.findOne({
-        where: { name: movieName },
+        where: { id: movieId },
       });
     })
     .then((movie) => {
@@ -187,10 +187,10 @@ router.post("/show", async (request, response) => {
 /**
  * GET next 7 dates for the movie
  */
-router.get("/movie-dates/:theatreName", async (request, response) => {
-  const theatreName = request.params.theatreName;
+router.get("/dates/:theatreId", async (request, response) => {
+  const theatreId = request.params.theatreId;
   const next7Dates = getNext7Dates();
-  const theatre = await Theatre.findOne({ where: { name: theatreName } });
+  const theatre = await Theatre.findOne({ where: { id: theatreId } });
 
   return response.status(200).json({
     next7Dates: next7Dates,
@@ -201,30 +201,27 @@ router.get("/movie-dates/:theatreName", async (request, response) => {
 /**
  * GET movies with show times for the given date and theatre
  */
-router.get(
-  "/movies-for-theatre-date/:theatreId/:date",
-  async (request, response) => {
-    let { theatreId, date } = request.params;
-    theatreId = Number(theatreId);
+router.get("/shows/:theatreId/:date", async (request, response) => {
+  let { theatreId, date } = request.params;
+  theatreId = Number(theatreId);
 
-    const shows = await Show.findAll({
-      where: { theatreId: theatreId, date: "2023-05-21" },
-      include: [
-        {
-          model: Theatre,
-        },
-        {
-          model: Screen,
-        },
-        {
-          model: Movie,
-        },
-      ],
-    });
+  const shows = await Show.findAll({
+    where: { theatreId: theatreId, date: date },
+    include: [
+      {
+        model: Theatre,
+      },
+      {
+        model: Screen,
+      },
+      {
+        model: Movie,
+      },
+    ],
+  });
 
-    return response.status(200).json(shows);
-  }
-);
+  return response.status(200).json(shows);
+});
 
 /**
  * GET bookings for the specified show
@@ -280,7 +277,7 @@ router.post("/show/book", async (request, response) => {
         throw `${seatsNotPresent} are not present`;
       }
 
-      return Booking.bulkCreate(
+      const newBookings = await Booking.bulkCreate(
         seatNums.map(
           (seatNum) => {
             return {
@@ -292,6 +289,8 @@ router.post("/show/book", async (request, response) => {
           { transaction }
         )
       );
+
+      return response.status(200).json(newBookings);
     });
   } catch (err) {
     return response.status(400).json(err);
