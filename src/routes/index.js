@@ -6,18 +6,18 @@ const {
   getTheatre,
   addTheatre,
   getDatesForTheatre,
-} = require("../controllers.js/theatre");
-const { getMovies, addMovie } = require("../controllers.js/movie");
-const { getScreens, addScreen } = require("../controllers.js/screen");
+} = require("../controllers/theatre");
+const { getMovies, addMovie } = require("../controllers/movie");
+const { getScreens, addScreen } = require("../controllers/screen");
 const {
   getShows,
   addShow,
   getShowsForMovieIdandDate,
-} = require("../controllers.js/show");
+} = require("../controllers/show");
 const {
   getBookingsForShow,
   bookSeatsForShow,
-} = require("../controllers.js/booking");
+} = require("../controllers/booking");
 
 const redisClient = Redis.createClient();
 const DEFAULT_EXPIRATION = 3600;
