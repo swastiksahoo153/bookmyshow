@@ -1,5 +1,6 @@
 const express = require("express");
 const apiRoutes = require("./src/routes");
+
 const { connectToDB } = require("./src/configs/mysqldb");
 
 require("dotenv").config();

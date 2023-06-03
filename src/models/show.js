@@ -9,25 +9,36 @@ const Screen = require("./screen");
 const Theatre = require("./theatre");
 // Define the model by providing name of the table, it's columns, their datatypes and constraints.
 
-const Show = sequalize.define("show", {
-  id: {
-    type: DataTypes.BIGINT,
-    autoIncrement: true,
-    primaryKey: true,
+const Show = sequalize.define(
+  "show",
+  {
+    id: {
+      type: DataTypes.BIGINT,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    startTime: {
+      type: DataTypes.TIME,
+      allowNull: false,
+    },
+    endTime: {
+      type: DataTypes.TIME,
+      allowNull: false,
+    },
+    showDate: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
+    },
   },
-  startTime: {
-    type: DataTypes.TIME,
-    allowNull: false,
-  },
-  endTime: {
-    type: DataTypes.TIME,
-    allowNull: false,
-  },
-  date: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-  },
-});
+  {
+    indexes: [
+      {
+        unique: true,
+        fields: ["showDate"],
+      },
+    ],
+  }
+);
 
 /**
  * Define relationship between the models
