@@ -29,10 +29,6 @@ const {
 } = require("../controllers/comment");
 const { searchShows } = require("../controllers/showsSearch");
 
-const { elasticClient } = require("../configs/elasticsearch");
-
-const indexName = "shows";
-
 const redisClient = Redis.createClient();
 const DEFAULT_EXPIRATION = 3600;
 
@@ -116,37 +112,23 @@ router.post("/movie/comment/:movieId", addCommentForMovie);
  */
 router.get("/movie/comment/:movieId", getCommentsForMovie);
 
-router.get("/index/movies/", async (request, response) => {
-  try {
-    const indexInfo = await elasticClient.indices.get({
-      index: indexName,
-    });
+/**
+ * GET search for shows
+ */
+router.get("/shows/search", searchShows);
 
-    console.log(indexInfo);
-    response.status(200).json(indexInfo);
-  } catch (error) {
-    console.error("Error getting index:", error);
-    response.status(400).json(error);
-  }
-});
+// router.get("/index/movies/", async (request, response) => {
+//   try {
+//     const indexInfo = await elasticClient.indices.get({
+//       index: indexName,
+//     });
 
-router.get("/index/movies/search", async (request, response) => {
-  try {
-    const result = await elasticClient.search({
-      index: indexName,
-      body: {
-        query: {
-          match_all: {}, // Match all documents
-        },
-      },
-    });
-    response.status(200).json(result);
-  } catch (error) {
-    console.error("Error getting index:", error);
-    response.status(400).json(error);
-  }
-});
-
-router.get("/movies/search", searchShows);
+//     console.log(indexInfo);
+//     response.status(200).json(indexInfo);
+//   } catch (error) {
+//     console.error("Error getting index:", error);
+//     response.status(400).json(error);
+//   }
+// });
 
 module.exports = router;

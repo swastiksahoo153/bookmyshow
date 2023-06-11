@@ -1,30 +1,30 @@
 const { elasticClient } = require("../configs/elasticsearch");
 const indexName = "shows";
 
-const searchShowsFromElastic = async (language, dimension, genre, query) => {
-  const shouldConditions = [];
+const searchShowsFromElastic = async (dimension, language, genre, query) => {
+  const mustConditions = [];
   if (language) {
-    shouldConditions.push({ term: { "language.keyword": language } });
+    mustConditions.push({ term: { "language.keyword": language } });
   }
   if (dimension) {
-    shouldConditions.push({ term: { "screen.video.keyword": dimension } });
+    mustConditions.push({ term: { "screen.video.keyword": dimension } });
   }
 
   if (genre) {
-    shouldConditions.push({
+    mustConditions.push({
       wildcard: {
-        "genre.keyword": `*${genre}*`,
+        "movie.genre.keyword": `*${genre}*`,
       },
     });
   }
-  console.log("shouldconditions: ", shouldConditions);
+  console.log("mustConditions: ", mustConditions);
   const requestBody = {
     query: {
       bool: {
         filter: [
           {
             bool: {
-              should: shouldConditions,
+              must: mustConditions,
               minimum_should_match: 0,
             },
           },
@@ -49,7 +49,6 @@ const searchShowsFromElastic = async (language, dimension, genre, query) => {
       index: indexName,
       body: requestBody,
     });
-    console.log("result: ", result);
     return result;
   } catch (error) {
     console.error("Error getting index:", error);
