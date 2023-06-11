@@ -29,15 +29,19 @@ const Show = sequalize.define(
       type: DataTypes.DATEONLY,
       allowNull: false,
     },
-  },
-  {
-    indexes: [
-      {
-        unique: true,
-        fields: ["showDate"],
-      },
-    ],
+    language: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   }
+  // {
+  //   indexes: [
+  //     {
+  //       unique: true,
+  //       fields: ["showDate"],
+  //     },
+  //   ],
+  // }
 );
 
 /**

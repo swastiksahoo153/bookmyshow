@@ -15,10 +15,18 @@ const getShows = async (request, response) => {
 };
 
 const addShow = async (request, response) => {
-  const { startTime, endTime, date, theatreId, screenId, movieId } =
+  const { startTime, endTime, date, theatreId, screenId, movieId, language } =
     request.body;
 
-  addShowService(startTime, endTime, date, theatreId, screenId, movieId)
+  addShowService(
+    startTime,
+    endTime,
+    date,
+    theatreId,
+    screenId,
+    movieId,
+    language
+  )
     .then((show) => {
       return response.json(show);
     })
