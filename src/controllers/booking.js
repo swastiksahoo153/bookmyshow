@@ -18,8 +18,8 @@ const getBookingsForShow = async (request, response) => {
 const bookSeatsForShow = async (request, response) => {
   let { showId, userId, seatNums } = request.body;
   bookSeatsForShowService(showId, userId, seatNums)
-    .then((bookings) => {
-      response.status(200).json(bookings);
+    .then((booking) => {
+      response.status(200).json(booking);
     })
     .catch((error) => {
       response.status(500).json(error);

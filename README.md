@@ -4,6 +4,8 @@ Please refer following [postman documentation](https://documenter.getpostman.com
 
 # Project Title: Problem Solving Case: bookmyshow
 
+### Note: To populate data into elastic search run :node src/scripts/populateESMovieIndex.js (to index show dataset)
+
 # ER Diagram
 
 ![ER Diagram](./public/erdiagram.PNG)

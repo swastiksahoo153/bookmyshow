@@ -3,18 +3,40 @@ const Theatre = require("../models/theatre");
 const Movie = require("../models/movie");
 const Screen = require("../models/screen");
 const Show = require("../models/show");
+const { elasticSearch } = require("../configs/elasticsearch");
+const Address = require("../models/address");
 
 const getShowsService = () => {
   return Show.findAll({
+    attributes: {
+      exclude: ["createdAt", "updatedAt", "movieId", "screenId", "theatreId"],
+    },
     include: [
       {
         model: Theatre,
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+        include: [
+          {
+            model: Address,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+          },
+        ],
       },
       {
         model: Screen,
+        attributes: {
+          exclude: ["createdAt", "updatedAt", "theatreId"],
+        },
       },
       {
         model: Movie,
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
       },
     ],
   });
@@ -26,7 +48,8 @@ const addShowService = async (
   date,
   theatreId,
   screenId,
-  movieId
+  movieId,
+  language
 ) => {
   const show = await Show.create({
     startTime,
@@ -35,6 +58,7 @@ const addShowService = async (
     theatreId,
     screenId,
     movieId,
+    language,
   });
 
   return sequalize

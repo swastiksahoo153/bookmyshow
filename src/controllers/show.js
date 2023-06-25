@@ -7,23 +7,31 @@ const {
 const getShows = async (request, response) => {
   getShowsService()
     .then((shows) => {
-      response.status(200).json(shows);
+      return response.status(200).json(shows);
     })
     .catch((error) => {
-      response.status(500).json(error);
+      return response.status(500).json(error);
     });
 };
 
 const addShow = async (request, response) => {
-  const { startTime, endTime, date, theatreId, screenId, movieId } =
+  const { startTime, endTime, date, theatreId, screenId, movieId, language } =
     request.body;
 
-  addShowService(startTime, endTime, date, theatreId, screenId, movieId)
+  addShowService(
+    startTime,
+    endTime,
+    date,
+    theatreId,
+    screenId,
+    movieId,
+    language
+  )
     .then((show) => {
       return response.json(show);
     })
     .catch((err) => {
-      response.json(err);
+      return response.json(err);
     });
 };
 
